@@ -23,8 +23,8 @@ def objective(a):
     """
     # ( 1/2 Sum i Sum j ai aj Pij ) - Sum
     inner = numpy.dot(a, P)
-    0.5 * numpy.sum(inner) - numpy.sum(a)
-    return
+    return 0.5 * numpy.sum(inner) - numpy.sum(a)
+
 
 
 def start(N):
@@ -86,6 +86,8 @@ def main():
 
     ret = minimize(objective, start(N), bounds=B, constraints=XC)
     alpha = ret['x']
+    done = ret['success']
+    print(done)
     print(alpha)
 
 main()
