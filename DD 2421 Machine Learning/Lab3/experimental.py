@@ -339,17 +339,20 @@ def computePrior(labels, W=None):
 
     # TODO: compute the values of prior for each class!
     # ==========================
-    for a in prior:
-        ticker = 0
-        partSum = 0
-        for x in labels:
-            if x == a:
-                partSum += 1
-        prior[ticker] = partSum/Npts
-        ticker += 1
-    # ==========================
 
+    outer_i = 0
+    for k in classes:
+        k_occ = 0
+        for i in labels:
+            if i == k:
+                k_occ += 1
+        prior[outer_i] = k_occ/Npts
+        outer_i += 1
+    
+    # ==========================
+    
     return prior
+
 
 # NOTE: you do not need to handle the W argument for this part!
 # in:      X - N x d matrix of N data points
@@ -436,8 +439,7 @@ def classifyBayes(X, prior, mu, sigma):
 
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
-    pk = 0
-
+    
     
     # ==========================
     
