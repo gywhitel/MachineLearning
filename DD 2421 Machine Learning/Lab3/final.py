@@ -93,17 +93,18 @@ def mlParams(X, labels, W=None):
                     # This should be correct, e.g. 4 if irises
                     
                     partSum[x] += d.feature[x]
-                divisor ++
+                divisor += 1
         # Divide with the number of occurences before moving on to next class
         for x in range(Ndims):
             partSum[x] = partSum[x]/divisor
 
         # Replace row in mu with the mean for this class
         mu[currentRow,:] = partSum
+        currentRow += 1
 
 
     # Covariances: I think this is done by calculating the deviation from the mean and doing vector multiplication to a scalar, dividing it by the number N of elements
-    for 
+    
                 
     
     # ==========================
