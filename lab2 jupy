@@ -1,0 +1,188 @@
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+import numpy, random, math
+
+""" l = linear, p = polynomial, r = rbf """
+choice = "p"
+C = None
+variance = 0.8
+blue_cluster1 = [1.5, 0.5]
+blue_cluster2 = [-1.5, -1.0]
+red_cluster = [0.0, -0.5]
+
+poly_p = 2
+sigma = 1
+
+numpy.random.seed(100)
+classA = numpy.concatenate((numpy.random.randn(10,2) * variance + blue_cluster1 , numpy.random.rand(10,2) * variance + blue_cluster2))
+classB = numpy.random.randn(20,2) * variance + red_cluster
+
+inputs = numpy.concatenate((classA, classB))
+t = numpy.concatenate((numpy.ones(classA.shape[0]),-numpy.ones(classB.shape[0])))
+
+N = inputs.shape[0]
+
+permute = list(range(N))
+random.shuffle(permute)
+inputs = inputs[permute, :]
+t = t[permute]
+
+
+start = numpy.zeros(N)
+
+def linearKernel():
+    size = (N,N)
+    matrix = numpy.zeros(size)
+    for i in range(N):
+        for j in range(N):
+            y = inputs[j]
+            x = inputs[i]
+            p = numpy.dot(x,y)
+            matrix[i][j] = p
+    return matrix
+
+def polyKernel(poly):
+    size = (N, N)
+    matrix = numpy.zeros(size)
+    for i in range(N):
+        for j in range(N):
+            y = inputs[j]
+            x = inputs[i]
+            p = math.pow((numpy.dot(x, y) +1),poly)
+            matrix[i][j] = p
+    return matrix
+
+def RBFKernel(s):
+    matrix = (N, N)
+    matrix = numpy.zeros(matrix)
+    for i in range(N):
+        for j in range(N):
+            matrix[i][j] = RBF(inputs[i], inputs[j], s)
+    return matrix
+
+def RBF(x, y, s):
+    num = math.sqrt(sum([(a - b) ** 2 for a, b in zip(x, y)])) ** 2
+    den = 2 * (s ** 2)
+    return math.e ** (-1 * num/den)
+
+def objective(a): 
+    """ The given function to implement """
+    ans = 0
+    for i in range(len(a)):
+        for j in range(len(a)):
+            ans = ans + t[i]*t[j]*a[i]*a[j]*P[i][j]
+    ans = ans*0.5
+    return ans - numpy.sum(a)
+
+def zerofun(a): 
+    """ The constraint """
+    ans = 0
+    for i in range(len(a)):
+        ans += a[i] * t[i]
+    return ans
+
+def plot():
+    plt.plot([p[0] for p in classA], [p[1] for p in classA], 'b.')
+    plt.plot([p[0] for p in classB], [p[1] for p in classB], 'r.')
+
+    plt.axis('equal')
+    plt.savefig('svmplot.pdf')
+    plt.show()
+
+
+def plot2(A, b):
+    xgrid = numpy.linspace(-4, 4)
+    ygrid = numpy.linspace(-4, 4)
+
+    grid = numpy.array([[indicator(A, x, y, b, choice) for y in ygrid] for x in xgrid])
+    plt.contour(xgrid, ygrid, grid, (-1.0, 0.0, 1.0), colors=("red", "black", "blue"), linewidths=(1,3,1))
+    plot()
+
+def removeZeros(A):
+    for i in range(N):
+        if A[i] < 1e-5:
+            A[i] = 0
+    return A
+
+def saveNonZeros(A):
+    """ Extract interesting vectors with corresponding data """
+    li = []
+    for i in range(N):
+        if A[i] != 0:
+            li.append((A[i],inputs[i],t[i]))
+    return li
+
+def bLinear(s): 
+    ans = 0
+    s_selected = s[0][1]
+    t = s[0][2]
+    for i in range(len(s)):
+        p = numpy.dot(s_selected, s[i][1])
+        ans = ans + s[i][0] * s[i][2] * p
+    return ans - t
+
+def bPoly(s): 
+    ans = 0
+    s_selected = s[0][1]
+    t = s[0][2]
+    for i in range(len(s)):
+        p = math.pow((numpy.dot(s_selected, s[i][1]) + 1), 2)
+        ans = ans + s[i][0] * s[i][2] * p
+    return ans - t
+
+def bRBF(s):
+    ans = 0
+    ss = s[0][1]
+    t = s[0][2]
+    for i in range(len(s)):
+        p = RBF(ss, s[i][1], 1)
+        ans = ans + s[i][0] * s[i][2] * p
+    return ans - t
+
+
+
+def indicator(A,y,x,b, choice):
+    ans = 0
+    for i in range(len(A)):
+        if choice == "l":
+            p = numpy.dot([x,y], A[i][1])
+        if choice == "p":
+            p = math.pow((numpy.dot([x,y], A[i][1]) +1),2)
+        if choice == "r":
+            p = RBF([x,y], A[i][1], 1)
+        ans = ans + A[i][0] * A[i][2] * p
+    return ans - b 
+
+
+
+def main(choice):
+    
+    ret = minimize ( objective , start , bounds=[(0, C) for b in range(N)], constraints={'type' : 'eq', 'fun' : zerofun} )
+    alpha = ret["x"]
+    success = ret["success"]
+    print(success)
+    alpha2 = removeZeros(alpha)
+    alpha3 = saveNonZeros(alpha2)
+
+    if choice == "l":
+        b = bLinear(alpha3)
+    if choice == "p":
+        b = bPoly(alpha3)
+    if choice == "r":
+        b = bRBF(alpha3)
+
+
+    plot2(alpha3, b)
+
+
+
+
+if choice=="l":
+    P = linearKernel()
+if choice == "p":
+    P = polyKernel(poly_p)
+if choice == "r":
+    P = RBFKernel(sigma)
+
+
+main(choice)
