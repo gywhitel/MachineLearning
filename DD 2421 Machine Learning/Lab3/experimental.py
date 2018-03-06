@@ -31,8 +31,8 @@ import random as rnd
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn import decomposition, tree
 
-# import seaborn as sns
-# sns.set()
+import seaborn as sns
+sns.set()
 
 def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
     """
@@ -339,7 +339,7 @@ def computePrior(labels, W=None):
 
     # TODO: compute the values of prior for each class!
     # ==========================
-
+    """
     outer_i = 0
     for k in classes:
         k_occ = 0
@@ -348,7 +348,17 @@ def computePrior(labels, W=None):
                 k_occ += 1
         prior[outer_i] = k_occ/Npts
         outer_i += 1
-    
+    """
+    index = 0
+    wk = []
+    for k in classes:
+        for x in range(Npts):
+            if labels[x] == k:
+                wk.append(W[x])
+        
+
+        prior[index] = np.sum(wk[index])
+        index += 1
     # ==========================
     
     return prior
@@ -364,8 +374,10 @@ def mlParams(X, labels, W=None):
     Npts,Ndims = np.shape(X)
     classes = np.unique(labels)
     Nclasses = np.size(classes)
+    old_W = False
 
     if W is None:
+        old_W = True
         W = np.ones((Npts,1))/float(Npts)
 
     mu = np.zeros((Nclasses,Ndims))
@@ -391,22 +403,42 @@ def mlParams(X, labels, W=None):
                 handle.append(X[d])
                 for x in range(len(X[d])):
                     # This should be correct, e.g. 4 if irises
-                    partSum[x] += int(X[d][x])
+                    if old_W:
+                        partSum[x] += int(X[d][x])
+                    else:
+                        partSum[x] += int(X[d][x]) * int(W[d])
                 divisor += 1
         # Divide with the number of occurences before moving on to next class
-        for x in range(Ndims):
-            partSum[x] = partSum[x]/divisor
+        if old_W:
+            for x in range(Ndims):
+                partSum[x] = partSum[x]/divisor
 
-        i = 0
-        for m in partSum:
-            covSum = 0
-            
-            for val in range(len(handle)):
-                covSum += (handle[val][i] - m) ** 2
-            
-            futureSigmaRow[i,:] = 1.0/divisor * covSum
-            i += 1
+        else:
+            all_W = np.sum(W)
+            for x in range(Ndims):
+                partSum[x] = partSum[x]/all_W
 
+        if old_W:
+            i = 0
+            for m in partSum:
+                covSum = 0
+                
+                for val in range(len(handle)):
+                    covSum += (handle[val][i] - m) ** 2
+                
+                futureSigmaRow[i,:] = 1.0/divisor * covSum
+                i += 1
+
+        else:
+            i = 0
+            for m in partSum:
+                covSum = 0
+                
+                for val in range(len(handle)):
+                    covSum += W[val] * (handle[val][i] - m) ** 2
+                
+                futureSigmaRow[i,:] = 1.0/all_W * covSum
+                i += 1
 
         # Replace row in mu with the mean for this class
         mu[currentRow] = partSum.reshape(-1)
@@ -439,8 +471,17 @@ def classifyBayes(X, prior, mu, sigma):
 
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
-    
-    
+
+    for x in range(Npts):
+        for i in range(Nclasses):
+            logProbPoint = 0
+            determinant = np.linalg.det(sigma[i])
+            logProbPoint -= 0.5*np.log(determinant)
+            newArray = X[x] - mu[i]
+            newArrayT = np.transpose(newArray)
+            logProbPoint -= 0.5 * np.dot(np.dot(newArray, sigma[i]), newArrayT)
+            logProbPoint + np.log(prior[i])
+            logProb[i][x] = logProbPoint
     # ==========================
     
     # one possible way of finding max a-posteriori once
@@ -474,7 +515,9 @@ class BayesClassifier(object):
 
 
 X, labels = genBlobs(centers=5)
-mu, sigma = mlParams(X,labels)
+Npts = labels.shape[0]
+W = np.ones((Npts,1))/float(Npts)
+mu, sigma = mlParams(X,labels,W)
 plotGaussian(X,labels,mu,sigma)
 
 
