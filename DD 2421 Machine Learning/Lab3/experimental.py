@@ -39,7 +39,6 @@ def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
     Plots an `nstd` sigma error ellipse based on the specified covariance
     matrix (`cov`). Additional keyword arguments are passed on to the
     ellipse patch artist.
-
     Parameters
     ----------
         cov : The 2x2 covariance matrix to base the ellipse on
@@ -50,7 +49,6 @@ def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
         ax : The axis that the ellipse will be plotted on. Defaults to the
             current axis.
         Additional keyword arguments are pass on to the ellipse patch.
-
     Returns
     -------
         A matplotlib ellipse artist
@@ -395,12 +393,14 @@ def mlParams(X, labels, W=None):
         futureSigmaRow = np.zeros((len(X[0]), 1))
         divisor = 0
         handle = []
-
+        wCurrentClass = []
         # For each d in X, 4, for example, in irises
         for d in range(0, Npts):
             # if the label of the data matches our currently handled label, then we can add the data to the right fields
             if int(labels[d]) == int(l):
+                'select the instances belong to Ci = k'
                 handle.append(X[d])
+                wCurrentClass.append(W[d])
                 for x in range(len(X[d])):
                     # This should be correct, e.g. 4 if irises
                     if old_W:
@@ -414,7 +414,7 @@ def mlParams(X, labels, W=None):
                 partSum[x] = partSum[x]/divisor
 
         else:
-            all_W = np.sum(W)
+            all_W = np.sum(wCurrentClass)
             for x in range(Ndims):
                 partSum[x] = partSum[x]/all_W
 
@@ -424,7 +424,7 @@ def mlParams(X, labels, W=None):
                 covSum = 0
                 
                 for val in range(len(handle)):
-                    covSum += (handle[val][i] - m) ** 2
+                    covSum += (handle[val][i] - m) ** 
                 
                 futureSigmaRow[i,:] = 1.0/divisor * covSum
                 i += 1
