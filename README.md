@@ -1,4 +1,4 @@
-# Machine Learning Projects
+# Machine Learning Labs
 - Decision tree
 - Support vector machine
 - Bayesian 
