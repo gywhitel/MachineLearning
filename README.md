@@ -1,7 +1,5 @@
-# Python application in
-- Machine learning
-  - Decision trees
-  - Support vector machine
-  - Bayesian Method
-  - Boosting(AdaBoost)
-- Image processing
+# Machine Learning Projects
+- Decision tree
+- Support vector machine
+- Bayesian 
+- Boost and AdaBoost
