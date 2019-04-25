@@ -424,7 +424,7 @@ def mlParams(X, labels, W=None):
                 covSum = 0
                 
                 for val in range(len(handle)):
-                    covSum += (handle[val][i] - m) ** 
+                    covSum += (handle[val][i] - m) ** 2
                 
                 futureSigmaRow[i,:] = 1.0/divisor * covSum
                 i += 1
@@ -464,7 +464,11 @@ def mlParams(X, labels, W=None):
 #      sigma - C x d x d matrix of class covariances (sigma[i] - class i sigma)
 # out:     h - N vector of class predictions for test points
 def classifyBayes(X, prior, mu, sigma):
-
+    '''
+    **Computer the** *Log(Posterior probability)* (c x N)
+    X: instances to be classified
+    prior: the prior probability of each class
+    '''
     Npts = X.shape[0]
     Nclasses,Ndims = np.shape(mu)
     logProb = np.zeros((Nclasses, Npts))
@@ -499,6 +503,8 @@ class BayesClassifier(object):
         self.trained = False
 
     def trainClassifier(self, X, labels, W=None):
+        'Train a BayesClassifier'
+        'defined attributes of returned classifier'
         rtn = BayesClassifier()
         rtn.prior = computePrior(labels, W)
         rtn.mu, rtn.sigma = mlParams(X, labels, W)
@@ -547,25 +553,63 @@ plotGaussian(X,labels,mu,sigma)
 # out:    classifiers - (maximum) length T Python list of trained classifiers
 #              alphas - (maximum) length T Python list of vote weights
 def trainBoost(base_classifier, X, labels, T=10):
+    '''
+    base_classifier: the weak classifier to be boosted**(class BayesClassifier)**
+    XandLabels: training set features, classes
+    T: the number of boosted classifiers
+    '''
     # these will come in handy later on
+    'N x 4'
     Npts,Ndims = np.shape(X)
 
     classifiers = [] # append new classifiers to this list
     alphas = [] # append the vote weight of the classifiers to this list
 
     # The weights for the first iteration
+    'Initialized weights'
     wCur = np.ones((Npts,1))/float(Npts)
+
+
+def classifyLogProb(LogProb):
+    '''
+    Return a class value based on LogProbability
+    Find the largest LogProbability and return its class  
+    LogProb: (c x 1)LogProbability Matrix
+    '''
+    # max(vote[:])
+    ascendClass = sorted(LogProb)
+    return ascendClass[-1]
+
 
     for i_iter in range(0, T):
         # a new classifier can be trained like this, given the current weights
+        'base_classifier is bayesClassifier class'
         classifiers.append(base_classifier.trainClassifier(X, labels, wCur))
 
         # do classification for each point
+        'vote = logProbability(c x N)'
         vote = classifiers[-1].classify(X)
-
+        'N x c'
+        LogProbAll = np.transpose(vote)
         # TODO: Fill in the rest, construct the alphas etc.
         # ==========================
         
+
+        error = 0
+        
+        for i in range(Npts):
+        'Transform logProb from c x N  to N x c'
+        'the predicted class'
+            hypothesis = classifyLogProb(LogProbAll(i))
+
+            if hypothesis == data[i].lable:
+                delta = 1
+            else:
+                delta = 0
+
+            error = error + data[i].weight * (1 - delta)
+        
+
         # alphas.append(alpha) # you will need to append the new alpha
         # ==========================
         
