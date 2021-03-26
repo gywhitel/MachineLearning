@@ -1,4 +1,4 @@
-# Lab 1
+# Lab 1 Decision tree
 ## Assignment 0
 > Motivate which problem is the most difficult for a decision tree algorithm to learn.
 
@@ -141,7 +141,7 @@ def main1():
 main1()
 ```
 ---
-# Lab 2
+# Lab 2 Support Vector Machine
 
 ## 1.Move the clusters around to make it easier or harder for the classifier to find a decent boundary. Pay attention to when the qt function prints an error message that it can not find a solution
 
@@ -171,7 +171,7 @@ classB = numpy.random.randn(20,2) * V + [1.5, 0.5]
 
 ## 5.Imagine that you are given data that is not easily separable. When should you opt for more slack rather than going for a more complex model and vice versa?
 
-# Lab 3
+# Lab 3 BAYESIAN LEARNING AND BOOSTING
 ```
 import numpy
 
