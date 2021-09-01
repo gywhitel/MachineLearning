@@ -7,12 +7,15 @@ Author: Dongbo Liang, **Yinghao Gao**
 Fig 1. (a) The inner structure of the rigid-soft coupled gripper  (b) the outer view of the gripper
 
 ![](fig/sensor.png)
+
 Fig 2. The composition of a pressure sensor
 
 ![](fig/layout.png)
+
 Fig 3. The layout of pressure sensors
 
 ![](fig/fig1.png)
+
 Fig 4. Load capacity comparison between soft gripper and rigid-soft coupled gripper.
 
 ![](fig/scatter.png)
