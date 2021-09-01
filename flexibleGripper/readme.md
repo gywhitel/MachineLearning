@@ -1,8 +1,23 @@
-# Rigid-Soft Coupled Gripper
+# The Design of a Rigid-Soft Coupled Gripper
 
-![](fig/fig1.png)Fig 1. Load capacity comparison between soft gripper and rigid-soft coupled gripper.
+Author: Dongbo Liang, **Yinghao Gao**
 
-![](fig/scatter.png)Fig 3. The scatter plot of the responses to eleven test  objects (the black dash lines indicate $\pm 3\sigma$ distance)
+![](fig/fig0.png)
+
+Fig 1. (a) The structure of the rigid-soft coupled gripper  
+
+![](fig/sensor.png)
+Fig 2. The composition of a pressure sensor
+
+![](fig/layout.png)
+Fig 3. The layout of pressure sensors
+
+![](fig/fig1.png)
+Fig 4. Load capacity comparison between soft gripper and rigid-soft coupled gripper.
+
+![](fig/scatter.png)
+
+Fig 5. A scatter plot of sensor responses to eleven test objects  (black dash lines indicate ± 3 sigma distance)
 
 Each object was grasped for 20 times, and 20 sets of corresponding response are collected. We adopted a supervised learning algorithm KNN (K Nearest Neighbor) to verify the recognition potential of the sensory system. 
 
