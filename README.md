@@ -1,11 +1,11 @@
 # Lab 1 Decision tree
 ## Assignment 0
-> Motivate which problem is the most difficult for a decision tree algorithm to learn.
+> Q: Motivate which problem is the most difficult for a decision tree algorithm to learn.
 
 The MONK-2 problem will be the most difficult, because we have to rely on all of the attributes.
 
 ## Assignment 1
-```
+```python
 import dtree
 import monkdata
 
@@ -16,10 +16,11 @@ entropy = [dtree.entropy(monkdata.monk1),
 for i in range(0,3):
     print(entropy[i])
 ```
-Dataset | Entropy  
-Monk1	| 1.0  
-Monk2	| 0.957117428264771  
-Monk3	| 0.9998061328047111  
+| Dataset | Entropy            |
+| ------- | ------------------ |
+| Monk1   | 1.0                |
+| Monk2   | 0.957117428264771  |
+| Monk3   | 0.9998061328047111 |
 
 ## Assignment 2
 Entropy for a uniform distribution (die) is larger than it is for non-uniform distribution (fake die).
@@ -27,7 +28,7 @@ Entropy for a uniform distribution (die) is larger than it is for non-uniform di
 ## Assignment 3
 ![](https://i.imgur.com/niZZTxY.png)
 ## Assignment 4
->For splitting we choose the attribute that maximizes the information gain, Eq.3. Looking at Eq.3 how does the entropy of the subsets, Sk, look like when the information gain is maximized?
+>Q: For splitting we choose the attribute that maximizes the information gain, Eq.3. Looking at Eq.3 how does the entropy of the subsets, Sk, look like when the information gain is maximized?
 
 Sk subset will be the minimum entropy for the best gain
 
@@ -60,12 +61,12 @@ Bottom right branch, should be FFT, could be avoided by pruning.
 ## Assignment 7
 ![](https://i.imgur.com/7RTh6CQ.png)
 
-```import dtree
+```python
 import monkdata as m
 import random
 from matplotlib import pyplot as pp
 import statistics
-
+import dtree
 
 def partition(data, fraction):
     ldata = list(data)
@@ -157,24 +158,16 @@ Polynomial, unsolvable?, p = 2, test generated with great variance (V = 1)
 
 Radial, generated with overlapping (V=1)
 
-```
+```python
 classA = numpy.concatenate((numpy.random.randn(10,2) * V + [1.5,0.5] , numpy.random.rand(10,2) * V + [-1.5, 0.5]))
 classB = numpy.random.randn(20,2) * V + [1.5, 0.5]
 ```
 
 
-## 2.Implement some of the non-linear kernels. you should be able to classify very hard datasets
-
-## 3.The non-linear kernels have parameters; explore how they influence the decision boundary. Reason about this in terms of the bias-variance trade-off
-
-## 4.Explore the role of the parameter C. What happens for very large/small values?
-
-## 5.Imagine that you are given data that is not easily separable. When should you opt for more slack rather than going for a more complex model and vice versa?
 
 # Lab 3 BAYESIAN LEARNING AND BOOSTING
-```
+```python
 import numpy
-
 
 class data:
     'Features and labels'
@@ -199,6 +192,5 @@ with open('D:\Python\MachineLearning\Lab3\irisY.txt') as f:
 iris = []
 for i in range(0,len(irisx)):
     iris.append(data(irisx[i],irisy[i]))
-
-
 ```
+
